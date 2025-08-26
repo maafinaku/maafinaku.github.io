@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pamit - Maafkan Aku</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+            position: relative;
+        }
+        
+        .container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.92);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            max-width: 90%;
+            width: 100%;
+            z-index: 10;
+            position: relative;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: fadeIn 1.5s ease-out;
+            transition: transform 0.5s, opacity 0.5s;
+        }
+        
+        h1 {
+            font-size: 28px;
+            line-height: 1.4;
+            margin-bottom: 25px;
+            color: #e74c3c;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            font-weight: 600;
+        }
+        
+        .signature {
+            margin-top: 30px;
+            font-style: italic;
+            color: #777;
+            font-size: 18px;
+        }
+        
+        .timer {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .heart {
+            position: absolute;
+            top: -50px;
+            width: 30px;
+            height: 30px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e74c3c'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' fill='none' stroke='%23c0392b' stroke-width='1'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            animation: fall 7s linear infinite;
+            opacity: 0.8;
+            transform-origin: center;
+        }
+        
+        .heart.cracked {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e74c3c'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' fill='none' stroke='%23c0392b' stroke-width='1'/%3E%3Cline x1='8' y1='12' x2='16' y2='12' stroke='%23c0392b' stroke-width='1'/%3E%3Cline x1='12' y1='8' x2='12' y2='16' stroke='%23c0392b' stroke-width='1'/%3E%3C/svg%3E");
+        }
+        
+        .gif-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease, visibility 1s;
+        }
+        
+        .gif-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .gif-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .gif-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .close-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 101;
+        }
+        
+        /* Efek retakan pada layar */
+        .screen-crack {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10,10 C20,30 40,20 50,50 C60,80 80,70 90,90' stroke='white' stroke-width='0.5' fill='none' opacity='0.7' /%3E%3Cpath d='M30,10 C40,25 60,15 70,40 C80,65 85,60 90,70' stroke='white' stroke-width='0.5' fill='none' opacity='0.7' /%3E%3Cpath d='M5,40 C15,35 25,45 35,30 C45,15 55,25 65,10 C75,5 85,15 95,20' stroke='white' stroke-width='0.5' fill='none' opacity='0.7' /%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        
+        .screen-crack.active {
+            opacity: 0.7;
+        }
+        
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.8;
+            }
+            25% {
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(50vh) rotate(180deg);
+                opacity: 0.8;
+            }
+            75% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes crackAnimation {
+            0% { transform: scale(1.5); opacity: 0; }
+            50% { transform: scale(1); opacity: 0.7; }
+            100% { opacity: 0.7; }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 22px;
+            }
+            
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .signature {
+                font-size: 16px;
+            }
+            
+            .heart {
+                width: 25px;
+                height: 25px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AKU PAMIT, MAAFIN AKU YANG BELUM BISA MENJADI YANG TERBAIK...</h1>
+         
+         <p class="signature">#sodron »» Untuk yang tersayang</p>
+        <div class="timer" id="timer">💔</div>
+    </div>
+    
+    <div class="hearts-container" id="hearts-container"></div>
+    
+    <!-- Efek retakan pada layar -->
+    <div class="screen-crack" id="screen-crack"></div>
+    
+    <div class="gif-overlay" id="gif-overlay">
+        <div class="close-overlay" id="close-overlay">
+            <i class="fas fa-times"></i>
+        </div>
+        <div class="gif-container">
+            <img src="https://i.pinimg.com/originals/cd/84/2b/cd842bf0dc9666411c9c7b62171776c1.gif" alt="Broken Heart Animation">
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk membuat hati jatuh
+        function createHeart() {
+            const heartsContainer = document.getElementById('hearts-container');
+            const heart = document.createElement('div');
+            
+            // Randomly decide if the heart is cracked or not (more cracked ones)
+            if (Math.random() > 0.3) {
+                heart.classList.add('heart', 'cracked');
+            } else {
+                heart.classList.add('heart');
+            }
+            
+            // Random position
+            const left = Math.random() * 100;
+            heart.style.left = `${left}vw`;
+            
+            // Random size
+            const size = Math.random() * 20 + 15;
+            heart.style.width = `${size}px`;
+            heart.style.height = `${size}px`;
+            
+            // Random fall duration
+            const duration = Math.random() * 5 + 5;
+            heart.style.animationDuration = `${duration}s`;
+            
+            // Random delay
+            const delay = Math.random() * 3;
+            heart.style.animationDelay = `${delay}s`;
+            
+            heartsContainer.appendChild(heart);
+            
+            // Remove heart after animation completes
+            setTimeout(() => {
+                heart.remove();
+            }, (duration + delay) * 1000);
+        }
+        
+        // Fungsi untuk menampilkan overlay GIF
+        function showOverlay() {
+            const overlay = document.getElementById('gif-overlay');
+            const container = document.querySelector('.container');
+            const screenCrack = document.getElementById('screen-crack');
+            
+            // Tampilkan efek retakan
+            screenCrack.classList.add('active');
+            screenCrack.style.animation = 'crackAnimation 1s forwards';
+            
+            // Sembunyikan konten utama
+            container.style.opacity = '0.3';
+            container.style.transform = 'scale(0.95)';
+            
+            // Tampilkan overlay
+            overlay.classList.add('active');
+            
+            // Set timer untuk menyembunyikan overlay setelah 9 detik
+            setTimeout(hideOverlay, 9000);
+        }
+        
+        // Fungsi untuk menyembunyikan overlay GIF
+        function hideOverlay() {
+            const overlay = document.getElementById('gif-overlay');
+            const container = document.querySelector('.container');
+            const screenCrack = document.getElementById('screen-crack');
+            
+            // Sembunyikan overlay
+            overlay.classList.remove('active');
+            
+            // Sembunyikan efek retakan
+            screenCrack.classList.remove('active');
+            screenCrack.style.animation = '';
+            
+            // Kembalikan konten utama
+            setTimeout(() => {
+                container.style.opacity = '1';
+                container.style.transform = 'scale(1)';
+            }, 500);
+            
+            // Reset timer untuk muncul lagi setelah 5 detik
+            startTimer();
+        }
+        
+        // Fungsi untuk memulai timer
+        function startTimer() {
+            let timeLeft = 5;
+            const timerElement = document.getElementById('timer');
+            
+            const countdown = setInterval(() => {
+                timerElement.textContent = `${timeLeft}`;
+                timeLeft--;
+                
+                if (timeLeft < 0) {
+                    clearInterval(countdown);
+                    showOverlay();
+                }
+            }, 1000);
+        }
+        
+        // Inisialisasi
+        function init() {
+            // Create hearts periodically
+            setInterval(createHeart, 300);
+            
+            // Create initial hearts
+            for (let i = 0; i < 20; i++) {
+                setTimeout(createHeart, 100 * i);
+            }
+            
+            // Mulai timer
+            startTimer();
+            
+            // Tambahkan event listener untuk close button
+            document.getElementById('close-overlay').addEventListener('click', hideOverlay);
+        }
+        
+        // Jalankan inisialisasi ketika halaman dimuat
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
