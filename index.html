@@ -3,393 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pamit - Maafkan Aku</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title></title>
     <style>
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow-x: hidden;
-            padding: 20px;
-            color: #333;
-            line-height: 1.6;
-            position: relative;
+            background-color: #000;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
         }
         
         .container {
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.92);
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            max-width: 90%;
-            width: 100%;
-            z-index: 10;
             position: relative;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            animation: fadeIn 1.5s ease-out;
-            margin-bottom: 30px;
+            width: 100%;
+            height: 100%;
         }
         
-        h1 {
-            font-size: 28px;
-            line-height: 1.4;
-            margin-bottom: 25px;
-            color: #e74c3c;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-            font-weight: 600;
+        .heart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background-color: #ff2a2a;
+            box-shadow: 0 0 100px rgba(255, 0, 0, 0.8);
+            animation: heartbeat 1s infinite, shake 0.5s infinite, flicker 0.1s infinite;
         }
         
-        .signature {
-            margin-top: 30px;
-            font-style: italic;
-            color: #777;
-            font-size: 18px;
+        .heart:before,
+        .heart:after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background-color: #ff2a2a;
+            border-radius: 50%;
         }
         
-        .timer {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #999;
+        .heart:before {
+            top: -100px;
+            left: 0;
         }
         
-        .hearts-container {
+        .heart:after {
+            top: 0;
+            left: 100px;
+        }
+        
+        .crack {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent 48%, #000 48%, #000 52%, transparent 52%),
+                        linear-gradient(90deg, transparent 48%, #000 48%, #000 52%, transparent 52%),
+                        linear-gradient(45deg, transparent 48%, #000 48%, #000 52%, transparent 52%),
+                        linear-gradient(135deg, transparent 48%, #000 48%, #000 52%, transparent 52%);
+            opacity: 0.7;
+            z-index: 2;
+        }
+        
+        .flicker-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background-color: rgba(255, 0, 0, 0.3);
             pointer-events: none;
-            z-index: 1;
+            z-index: 10;
+            animation: screen-flicker 0.05s infinite;
+            opacity: 0;
         }
         
-        .heart {
+        .text {
             position: absolute;
-            top: -50px;
-            width: 30px;
-            height: 30px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e74c3c'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' fill='none' stroke='%23c0392b' stroke-width='1'/%3E%3C/svg%3E");
-            background-size: contain;
-            background-repeat: no-repeat;
-            animation: fall 7s linear infinite;
-            opacity: 0.8;
-            transform-origin: center;
-        }
-        
-        .heart.cracked {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e74c3c'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' fill='none' stroke='%23c0392b' stroke-width='1'/%3E%3Cline x1='8' y1='12' x2='16' y2='12' stroke='%23c0392b' stroke-width='1'/%3E%3Cline x1='12' y1='8' x2='12' y2='16' stroke='%23c0392b' stroke-width='1'/%3E%3C/svg%3E");
-        }
-        
-        /* Kontrol musik */
-        .music-control {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 50;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .music-control:hover {
-            transform: scale(1.1);
-            background-color: rgba(255, 255, 255, 1);
-        }
-        
-        .music-control i {
+            bottom: 50px;
+            width: 100%;
+            text-align: center;
+            color: #fff;
             font-size: 24px;
-            color: #e74c3c;
+            text-shadow: 0 0 10px #ff0000;
+            z-index: 5;
+            animation: text-flicker 2s infinite;
         }
         
-        .music-control.paused i.fa-play {
-            display: block;
+        @keyframes heartbeat {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
         }
         
-        .music-control.paused i.fa-pause {
-            display: none;
+        @keyframes shake {
+            0% { transform: translate(-50%, -50%) translate(0, 0); }
+            10% { transform: translate(-50%, -50%) translate(-5px, -5px); }
+            20% { transform: translate(-50%, -50%) translate(5px, 5px); }
+            30% { transform: translate(-50%, -50%) translate(-5px, 5px); }
+            40% { transform: translate(-50%, -50%) translate(5px, -5px); }
+            50% { transform: translate(-50%, -50%) translate(-5px, -5px); }
+            60% { transform: translate(-50%, -50%) translate(5px, 5px); }
+            70% { transform: translate(-50%, -50%) translate(-5px, 5px); }
+            80% { transform: translate(-50%, -50%) translate(5px, -5px); }
+            90% { transform: translate(-50%, -50%) translate(-5px, -5px); }
+            100% { transform: translate(-50%, -50%) translate(0, 0); }
         }
         
-        .music-control:not(.paused) i.fa-play {
-            display: none;
+        @keyframes flicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
         }
         
-        .music-control:not(.paused) i.fa-pause {
-            display: block;
+        @keyframes screen-flicker {
+            0% { opacity: 0; }
+            50% { opacity: 0.3; }
+            100% { opacity: 0; }
         }
         
-        /* YouTube Player */
-        .youtube-player {
-            width: 100%;
-            max-width: 560px;
-            margin: 20px 0;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .youtube-player iframe {
-            width: 100%;
-            height: 315px;
-            border: none;
-        }
-        
-        /* GIF Container */
-        .gif-container {
-            width: 100%;
-            max-width: 300px;
-            margin: 20px 0 40px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .gif-container img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        
-        @keyframes fall {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 0.8;
-            }
-            25% {
-                opacity: 1;
-            }
-            50% {
-                transform: translateY(50vh) rotate(180deg);
-                opacity: 0.8;
-            }
-            75% {
-                opacity: 0.6;
-            }
-            100% {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @media (max-width: 768px) {
-            .youtube-player iframe {
-                height: 250px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 22px;
-            }
-            
-            .container {
-                padding: 30px 20px;
-            }
-            
-            .signature {
-                font-size: 16px;
-            }
-            
-            .heart {
-                width: 25px;
-                height: 25px;
-            }
-            
-            .music-control {
-                bottom: 15px;
-                right: 15px;
-                width: 40px;
-                height: 40px;
-            }
-            
-            .music-control i {
-                font-size: 20px;
-            }
-            
-            .youtube-player iframe {
-                height: 150px;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            h1 {
-                font-size: 20px;
-            }
-            
-            .youtube-player iframe {
-                height: 180px;
-            }
+        @keyframes text-flicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
 <body>
-
- <div class="timer" id="timer">💔</div>
-    </div>
- <!-- YouTube Player -->
-    <div class="youtube-player">
-        <iframe id="youtube-player" src="https://www.youtube.com/embed/nnZpgbJQVXw?enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </div>
-    
     <div class="container">
-        <h1>AKU PAMIT, MAAFIN AKU YANG BELUM BISA MENJADI YANG TERBAIK.</h1>
-        <p class="signature">#sodron »» Untuk yang tersayang</p>
-        
+        <div class="heart">
+            <div class="crack"></div>
+        </div>
+        <div class="flicker-screen"></div>
+        <div class="text">#sodron</div>
     </div>
-    
-   
-    <!-- GIF Container -->
-    <div class="gif-container">
-        <img src="https://i.pinimg.com/originals/cd/84/2b/cd842bf0dc9666411c9c7b62171776c1.gif" alt="Broken Heart Animation">
-    </div>
-    
-    <div class="hearts-container" id="hearts-container"></div>
-    
-    <!-- Kontrol musik -->
-    <div class="music-control paused" id="music-control">
-        <i class="fas fa-play"></i>
-        <i class="fas fa-pause"></i>
-    </div>
+
+    <audio id="noise" loop>
+           <source src="https://www.fesliyanstudios.com/play-mp3/4229" type="audio/mpeg">   
+            </audio>
 
     <script>
-        // Fungsi untuk membuat hati jatuh
-        function createHeart() {
-            const heartsContainer = document.getElementById('hearts-container');
-            const heart = document.createElement('div');
+        document.addEventListener('DOMContentLoaded', function() {
+            const audio = document.getElementById('noise');
+            audio.volume = 0.7;
             
-            // Randomly decide if the heart is cracked or not (more cracked ones)
-            if (Math.random() > 0.3) {
-                heart.classList.add('heart', 'cracked');
-            } else {
-                heart.classList.add('heart');
-            }
-            
-            // Random position
-            const left = Math.random() * 100;
-            heart.style.left = `${left}vw`;
-            
-            // Random size
-            const size = Math.random() * 20 + 15;
-            heart.style.width = `${size}px`;
-            heart.style.height = `${size}px`;
-            
-            // Random fall duration
-            const duration = Math.random() * 5 + 5;
-            heart.style.animationDuration = `${duration}s`;
-            
-            // Random delay
-            const delay = Math.random() * 3;
-            heart.style.animationDelay = `${delay}s`;
-            
-            heartsContainer.appendChild(heart);
-            
-            // Remove heart after animation completes
-            setTimeout(() => {
-                heart.remove();
-            }, (duration + delay) * 1000);
-        }
-        
-        // Fungsi untuk mengontrol pemutaran YouTube
-        function setupYouTubePlayer() {
-            const player = document.getElementById('youtube-player');
-            const musicControl = document.getElementById('music-control');
-            let playerState = -1;
-            
-            // Load YouTube IFrame API
-            const tag = document.createElement('script');
-            tag.src = "https://www.youtube.com/iframe_api";
-            const firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-            
-            // This function will be called when the API is ready
-            window.onYouTubeIframeAPIReady = function() {
-                // The player is automatically created, we just need to get a reference
-                player.ytPlayer = new YT.Player('youtube-player', {
-                    events: {
-                        'onStateChange': onPlayerStateChange
-                    }
-                });
-            };
-            
-            function onPlayerStateChange(event) {
-                playerState = event.data;
-                
-                if (playerState === YT.PlayerState.PLAYING) {
-                    musicControl.classList.remove('paused');
-                } else if (playerState === YT.PlayerState.PAUSED || playerState === YT.PlayerState.ENDED) {
-                    musicControl.classList.add('paused');
-                }
-            }
-            
-            // Kontrol musik toggle
-            musicControl.addEventListener('click', function() {
-                if (player.ytPlayer) {
-                    if (playerState === YT.PlayerState.PLAYING) {
-                        player.ytPlayer.pauseVideo();
-                        musicControl.classList.add('paused');
-                    } else {
-                        player.ytPlayer.playVideo();
-                        musicControl.classList.remove('paused');
-                    }
-                }
+            // Memutar audio setelah interaksi pengguna
+            document.body.addEventListener('click', function() {
+                audio.play();
             });
-        }
-        
-        // Inisialisasi
-        function init() {
-            // Create hearts periodically
-            setInterval(createHeart, 300);
             
-            // Create initial hearts
-            for (let i = 0; i < 20; i++) {
-                setTimeout(createHeart, 100 * i);
-            }
+            // Efek getar yang lebih intens
+            setInterval(() => {
+                document.body.style.transform = `translate(${Math.random() * 10 - 5}px, ${Math.random() * 10 - 5}px)`;
+            }, 50);
             
-            // Setup YouTube player
-            setupYouTubePlayer();
-        }
-        
-        // Jalankan inisialisasi ketika halaman dimuat
-        window.addEventListener('load', init);
+            // Efek flash acak
+            setInterval(() => {
+                const flash = document.createElement('div');
+                flash.style.position = 'fixed';
+                flash.style.top = '0';
+                flash.style.left = '0';
+                flash.style.width = '100%';
+                flash.style.height = '100%';
+                flash.style.backgroundColor = `rgb(255, ${Math.random() * 100}, ${Math.random() * 100})`;
+                flash.style.opacity = Math.random() * 0.5;
+                flash.style.pointerEvents = 'none';
+                flash.style.zIndex = '9';
+                document.body.appendChild(flash);
+                
+                setTimeout(() => {
+                    document.body.removeChild(flash);
+                }, 100);
+            }, 300);
+        });
     </script>
 </body>
 </html>
